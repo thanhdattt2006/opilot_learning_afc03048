@@ -230,17 +230,23 @@ export default function EditCourse() {
           <div className="mb-4">
                       <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Tags</label>
                       <div className="flex flex-wrap gap-2">
-                        {sortedTags.map((tag) => (
-                          <label key={tag.id} className="flex items-center space-x-2">
-                            <input
-                              type="checkbox"
-                              name="tags"
-                              value={tag.id}
-                              className="text-indigo-600 focus:ring-indigo-500"
-                            />
-                            <span style={{ color: 'gray', paddingRight: '6px' }}>{tag.name}</span>
-                          </label>
-                        ))}
+                        {sortedTags.map((tag) => {
+                          const isChecked = course.tags.some((t) => t.id === tag.id);
+                          return (
+                            <label key={tag.id} className="flex items-center space-x-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                name="tags"
+                                value={tag.id}
+                                defaultChecked={isChecked}
+                                className="text-indigo-600 focus:ring-indigo-500 rounded"
+                              />
+                              <span style={{ color: "gray", paddingRight: "6px" }}>
+                                {tag.name}
+                              </span>
+                            </label>
+                          );
+                        })}
                       </div>
                     </div>
 
