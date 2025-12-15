@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Category {
+  id          String       @id @default(uuid())
+  name        String       @unique
+  subCategories SubCategory[]
+  courses     Course[]
+}
+
+model SubCategory {
+  id         String   @id @default(uuid())
+  name       String
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+  courses    Course[]
+}
+
+model Tag {
+  id      String   @id @default(uuid())
+  name    String   @unique
+  courses Course[] // Added opposite relation field
+}
+
+model Course {
+  id            String       @id @default(uuid())
+  title         String
+  isFree        Boolean
+  postDate      DateTime
+  categoryId    String
+  category      Category      @relation(fields: [categoryId], references: [id])
+  subCategoryId String
+  subCategory   SubCategory   @relation(fields: [subCategoryId], references: [id])
+  tags          Tag[]         // Removed @relation attribute
+}
