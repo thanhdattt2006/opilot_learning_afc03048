@@ -13,7 +13,7 @@ The application provides full data management capabilities for courses:
 | **Update** | UPDATE | Updates detailed course information, ensuring correct pre-selection of existing tags and editable fields. |
 | **Delete** | DELETE | Permanently removes a course record. |
 
-## ✨ UX/Front-end Highlights
+## UX/Front-end Highlights
 
 The project's key focus was on refining UI/UX, demonstrating attention to detail and modern web development practices:
 
@@ -57,16 +57,7 @@ The current setup may involve a conflict between React 19 (used in the project) 
 Bash
 
 npm install --legacy-peer-deps
-3. Database Setup (Prisma)
-Ensure your .env file has the DATABASE_URL configured.
-
-Initialize the database schema and seed sample data:
-
-Bash
-
-npx prisma migrate dev --name init
-npx prisma db seed
-4. Start Development Server
+3. Start Development Server
 Run the development command to start the server:
 
 Bash
@@ -79,4 +70,4 @@ Please navigate directly to the following path to view the main course managemen
 
 http://localhost:5173/courses
 
-Developed by [Your Name]
+Developed by Dave
