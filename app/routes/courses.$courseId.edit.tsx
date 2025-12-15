@@ -1,9 +1,9 @@
-import { json, redirect } from "@remix-run/node";
-import { useLoaderData, Form, useActionData, useNavigation, Link } from "@remix-run/react";
-import { prisma } from "~/services/db.server";
-import { useState } from "react";
-import type { LoaderFunction, ActionFunction } from "@remix-run/node";
-import type { Prisma } from "@prisma/client";
+import { json, redirect } from '@remix-run/node';
+import type { LoaderFunction, ActionFunction } from '@remix-run/node';
+import { useLoaderData, Form, useActionData, useNavigation, Link } from '@remix-run/react';
+import { useState } from 'react';
+
+import { prisma } from '~/services/db.server';
 
 type LoaderData = {
   course: {
@@ -32,22 +32,22 @@ export const loader: LoaderFunction = async ({ params }) => {
   });
 
   if (!course) {
-    throw new Response("Course not found", { status: 404 });
+    throw new Response('Course not found', { status: 404 });
   }
 
   const allCategories = await prisma.category.findMany({
     include: { subCategories: true },
-    orderBy: { name: "asc" },
+    orderBy: { name: 'asc' },
   });
 
   const allTags = await prisma.tag.findMany({
-    orderBy: { name: "asc" },
+    orderBy: { name: 'asc' },
   });
 
   return json<LoaderData>({
     course: {
       ...course,
-      postDate: course.postDate.toISOString().split("T")[0],
+      postDate: course.postDate.toISOString().split('T')[0],
     },
     allCategories,
     allTags,
@@ -67,18 +67,18 @@ export const action: ActionFunction = async ({ request, params }) => {
   const { courseId } = params;
   const formData = await request.formData();
 
-  const title = formData.get("title")?.toString();
-  const categoryId = formData.get("categoryId")?.toString();
-  const subCategoryId = formData.get("subCategoryId")?.toString();
-  const postDate = formData.get("postDate")?.toString();
-  const isFree = formData.get("isFree") === "true";
-  const tagIds = formData.getAll("tags").map((tag) => tag.toString());
+  const title = formData.get('title')?.toString();
+  const categoryId = formData.get('categoryId')?.toString();
+  const subCategoryId = formData.get('subCategoryId')?.toString();
+  const postDate = formData.get('postDate')?.toString();
+  const isFree = formData.get('isFree') === 'true';
+  const tagIds = formData.getAll('tags').map((tag) => tag.toString());
 
-  const errors: ActionData["errors"] = {};
-  if (!title) errors.title = "Title is required";
-  if (!categoryId) errors.categoryId = "Category is required";
-  if (!subCategoryId) errors.subCategoryId = "SubCategory is required";
-  if (!postDate) errors.postDate = "Post Date is required";
+  const errors: ActionData['errors'] = {};
+  if (!title) errors.title = 'Title is required';
+  if (!categoryId) errors.categoryId = 'Category is required';
+  if (!subCategoryId) errors.subCategoryId = 'SubCategory is required';
+  if (!postDate) errors.postDate = 'Post Date is required';
 
   if (Object.keys(errors).length > 0) {
     return json<ActionData>({ errors });
@@ -99,7 +99,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     },
   });
 
-  return redirect("/courses");
+  return redirect('/courses');
 };
 
 export default function EditCourse() {
@@ -112,10 +112,10 @@ export default function EditCourse() {
     allCategories.find((category) => category.id === selectedCategory)?.subCategories || [];
 
   const sortedTags = [...allTags].sort((a, b) =>
-    a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: "base" })
+    a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' })
   );
 
-  const isSubmitting = navigation.state === "submitting";
+  const isSubmitting = navigation.state === 'submitting';
 
   return (
     <div className="bg-gray-50 min-h-screen p-8">
@@ -228,27 +228,27 @@ export default function EditCourse() {
           </div>
 
           <div className="mb-4">
-                      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Tags</label>
-                      <div className="flex flex-wrap gap-2">
-                        {sortedTags.map((tag) => {
-                          const isChecked = course.tags.some((t) => t.id === tag.id);
-                          return (
-                            <label key={tag.id} className="flex items-center space-x-2 cursor-pointer">
-                              <input
-                                type="checkbox"
-                                name="tags"
-                                value={tag.id}
-                                defaultChecked={isChecked}
-                                className="text-indigo-600 focus:ring-indigo-500 rounded"
-                              />
-                              <span style={{ color: "gray", paddingRight: "6px" }}>
-                                {tag.name}
-                              </span>
-                            </label>
-                          );
-                        })}
-                      </div>
-                    </div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Tags</label>
+            <div className="flex flex-wrap gap-2">
+              {sortedTags.map((tag) => {
+                const isChecked = course.tags.some((t) => t.id === tag.id);
+                return (
+                  <label key={tag.id} className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      name="tags"
+                      value={tag.id}
+                      defaultChecked={isChecked}
+                      className="text-indigo-600 focus:ring-indigo-500 rounded"
+                    />
+                    <span style={{ color: 'gray', paddingRight: '6px' }}>
+                      {tag.name}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
 
           <div className="flex justify-end space-x-4">
             <Link
@@ -262,7 +262,7 @@ export default function EditCourse() {
               className="inline-flex items-center justify-center px-4 py-2.5 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Saving..." : "Save Changes"}
+              {isSubmitting ? 'Saving...' : 'Save Changes'}
             </button>
           </div>
         </Form>

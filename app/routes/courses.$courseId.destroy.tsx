@@ -1,6 +1,7 @@
-import { redirect } from "@remix-run/node";
-import { prisma } from "~/services/db.server";
-import type { ActionFunction } from "@remix-run/node";
+import { redirect } from '@remix-run/node';
+import type { ActionFunction } from '@remix-run/node';
+
+import { prisma } from '~/services/db.server';
 
 export const action: ActionFunction = async ({ params }) => {
   const { courseId } = params;
@@ -9,5 +10,5 @@ export const action: ActionFunction = async ({ params }) => {
     where: { id: courseId },
   });
 
-  return redirect("/courses");
+  return redirect('/courses');
 };

@@ -1,9 +1,10 @@
-import { json } from "@remix-run/node";
-import { Link, useLoaderData, useSubmit, useSearchParams, Form } from "@remix-run/react";
-import { prisma } from "~/services/db.server";
-import { useEffect, useState } from "react";
-import type { LoaderFunction } from "@remix-run/node";
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from '@prisma/client';
+import { json } from '@remix-run/node';
+import type { LoaderFunction } from '@remix-run/node';
+import { Link, useLoaderData, useSubmit, useSearchParams, Form } from '@remix-run/react';
+import { useEffect, useState } from 'react';
+
+import { prisma } from '~/services/db.server';
 
 const PAGE_SIZE = 8;
 
@@ -16,23 +17,23 @@ export type CourseWithRelations = Prisma.CourseGetPayload<{
   };
 }>;
 
-export type SerializedCourse = Omit<CourseWithRelations, "postDate"> & {
+export type SerializedCourse = Omit<CourseWithRelations, 'postDate'> & {
   postDate: string;
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
-  const search = url.searchParams.get("search") || "";
-  const categoryId = url.searchParams.get("categoryId") || undefined;
-  const subCategoryId = url.searchParams.get("subCategoryId") || undefined;
-  const isFree = url.searchParams.get("isFree");
-  const tagId = url.searchParams.get("tagId") || undefined;
-  const startDate = url.searchParams.get("startDate") || undefined;
-  const endDate = url.searchParams.get("endDate") || undefined;
-  const sort = url.searchParams.get("sort") || "postDate-desc";
+  const search = url.searchParams.get('search') || '';
+  const categoryId = url.searchParams.get('categoryId') || undefined;
+  const subCategoryId = url.searchParams.get('subCategoryId') || undefined;
+  const isFree = url.searchParams.get('isFree');
+  const tagId = url.searchParams.get('tagId') || undefined;
+  const startDate = url.searchParams.get('startDate') || undefined;
+  const endDate = url.searchParams.get('endDate') || undefined;
+  const sort = url.searchParams.get('sort') || 'postDate-desc';
   
   // --- PAGINATION LOGIC FIX (MANUAL) ---
-  let page = parseInt(url.searchParams.get("page") || "1", 10);
+  let page = parseInt(url.searchParams.get('page') || '1', 10);
   if (isNaN(page) || page < 1) {
     page = 1;
   }
@@ -42,7 +43,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     title: search ? { contains: search } : undefined,
     categoryId: categoryId || undefined,
     subCategoryId: subCategoryId || undefined,
-    isFree: isFree === "yes" ? true : isFree === "no" ? false : undefined,
+    isFree: isFree === 'yes' ? true : isFree === 'no' ? false : undefined,
     tags: tagId ? { some: { id: tagId } } : undefined,
     postDate: {
       gte: startDate ? new Date(startDate) : undefined,
@@ -52,10 +53,10 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   const orderBy: Prisma.CourseOrderByWithRelationInput = (() => {
     switch (sort) {
-      case "title-asc": return { title: "asc" };
-      case "title-desc": return { title: "desc" };
-      case "postDate-asc": return { postDate: "asc" };
-      case "postDate-desc": default: return { postDate: "desc" };
+      case 'title-asc': return { title: 'asc' };
+      case 'title-desc': return { title: 'desc' };
+      case 'postDate-asc': return { postDate: 'asc' };
+      case 'postDate-desc': default: return { postDate: 'desc' };
     }
   })();
 
@@ -88,10 +89,10 @@ export const loader: LoaderFunction = async ({ request }) => {
     courses: serializedCourses,
     pagination: { page, totalPages, totalItems },
     allCategories: await prisma.category.findMany({
-      orderBy: { name: "asc" },
-      include: { subCategories: { orderBy: { name: "asc" } } },
+      orderBy: { name: 'asc' },
+      include: { subCategories: { orderBy: { name: 'asc' } } },
     }),
-    allTags: await prisma.tag.findMany({ orderBy: { name: "asc" } }),
+    allTags: await prisma.tag.findMany({ orderBy: { name: 'asc' } }),
   });
 };
 
@@ -103,20 +104,20 @@ export default function CoursesPage() {
 
   // Fix UX: Keep search input focused on reload
   useEffect(() => {
-    const searchInput = document.getElementById("search") as HTMLInputElement;
+    const searchInput = document.getElementById('search') as HTMLInputElement;
     if (searchInput) {
-      searchInput.value = searchParams.get("search") || "";
+      searchInput.value = searchParams.get('search') || '';
     }
   }, [searchParams]);
 
   // Client-side Dependent Dropdown Logic
-  const selectedCategoryId = searchParams.get("categoryId");
+  const selectedCategoryId = searchParams.get('categoryId');
   const selectedCategory = allCategories.find((category) => category.id === selectedCategoryId);
   const filteredSubCategories = selectedCategory ? selectedCategory.subCategories : [];
 
   const createPageLink = (newPage: number) => {
     const params = new URLSearchParams(searchParams);
-    params.set("page", newPage.toString());
+    params.set('page', newPage.toString());
     return `?${params.toString()}`;
   };
 
@@ -162,7 +163,7 @@ export default function CoursesPage() {
                 type="text"
                 name="search"
                 id="search"
-                defaultValue={searchParams.get("search") || ""}
+                defaultValue={searchParams.get('search') || ''}
                 className="w-full bg-white border border-gray-300 text-gray-900 placeholder-gray-500 rounded-md px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
                 placeholder="Search courses..."
               />
@@ -174,8 +175,8 @@ export default function CoursesPage() {
             <select
               name="categoryId"
               id="categoryId"
-              key={searchParams.get("categoryId")}
-              defaultValue={searchParams.get("categoryId") || ""}
+              key={searchParams.get('categoryId')}
+              defaultValue={searchParams.get('categoryId') || ''}
               className="w-full bg-white border border-gray-300 text-gray-900 placeholder-gray-500 rounded-md px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
             >
               <option value="">All Categories</option>
@@ -190,8 +191,8 @@ export default function CoursesPage() {
             <select
               name="subCategoryId"
               id="subCategoryId"
-              key={searchParams.get("subCategoryId")}
-              defaultValue={searchParams.get("subCategoryId") || ""}
+              key={searchParams.get('subCategoryId')}
+              defaultValue={searchParams.get('subCategoryId') || ''}
               disabled={!selectedCategoryId}
               className="w-full bg-white border border-gray-300 text-gray-900 placeholder-gray-500 rounded-md px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
             >
@@ -207,8 +208,8 @@ export default function CoursesPage() {
             <select
               name="isFree"
               id="isFree"
-              key={searchParams.get("isFree")}
-              defaultValue={searchParams.get("isFree") || ""}
+              key={searchParams.get('isFree')}
+              defaultValue={searchParams.get('isFree') || ''}
               className="w-full bg-white border border-gray-300 text-gray-900 placeholder-gray-500 rounded-md px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
             >
               <option value="all">All</option>
@@ -222,8 +223,8 @@ export default function CoursesPage() {
             <select
               name="tagId"
               id="tagId"
-              key={searchParams.get("tagId")}
-              defaultValue={searchParams.get("tagId") || ""}
+              key={searchParams.get('tagId')}
+              defaultValue={searchParams.get('tagId') || ''}
               className="w-full bg-white border border-gray-300 text-gray-900 placeholder-gray-500 rounded-md px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
             >
               <option value="">All Tags</option>
@@ -238,8 +239,8 @@ export default function CoursesPage() {
             <select
               name="sort"
               id="sort"
-              key={searchParams.get("sort")}
-              defaultValue={searchParams.get("sort") || "postDate-desc"}
+              key={searchParams.get('sort')}
+              defaultValue={searchParams.get('sort') || 'postDate-desc'}
               className="w-full bg-white border border-gray-300 text-gray-900 placeholder-gray-500 rounded-md px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
             >
               <option value="postDate-desc">Newest</option>
@@ -276,8 +277,8 @@ export default function CoursesPage() {
                 
                 <div className="p-6 flex flex-col flex-grow">
                   <div className="flex justify-between items-center mb-4">
-                    <span className={`px-3 py-1 text-xs font-semibold rounded-full text-white ${course.isFree ? "bg-green-500" : "bg-blue-500"}`}>
-                      {course.isFree ? "Free" : "Paid"}
+                    <span className={`px-3 py-1 text-xs font-semibold rounded-full text-white ${course.isFree ? 'bg-green-500' : 'bg-blue-500'}`}>
+                      {course.isFree ? 'Free' : 'Paid'}
                     </span>
                   </div>
                   <div className="mb-4">
@@ -285,7 +286,7 @@ export default function CoursesPage() {
                       {course.title}
                     </h3>
                     <p className="text-sm text-gray-500 uppercase tracking-wide">
-                      {course.category ? course.category.name : "Uncategorized"}
+                      {course.category ? course.category.name : 'Uncategorized'}
                     </p>
                   </div>
                   <div className="flex items-center text-sm text-gray-500 mb-4">
@@ -307,7 +308,7 @@ export default function CoursesPage() {
                     <Link
                       to={`/courses/${course.id}/edit`}
                       className="text-indigo-600 text-sm hover:underline font-medium"
-                      style= {{paddingRight: '6px'}}
+                      style= {{ paddingRight: '6px' }}
                     >
                       Edit
                     </Link>
@@ -329,8 +330,8 @@ export default function CoursesPage() {
               to={createPageLink(pagination.page - 1)}
               className={`px-4 py-2 border rounded-md ${
                 pagination.page <= 1
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed pointer-events-none opacity-50"
-                  : "bg-white text-gray-700 hover:bg-gray-100"
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed pointer-events-none opacity-50'
+                  : 'bg-white text-gray-700 hover:bg-gray-100'
               }`}
               onClick={(e) => { if (pagination.page <= 1) e.preventDefault(); }}
               aria-disabled={pagination.page <= 1}
@@ -345,8 +346,8 @@ export default function CoursesPage() {
                   to={createPageLink(pageNumber)}
                   className={`px-4 py-2 border rounded-md ${
                     pageNumber === pagination.page
-                      ? "bg-indigo-600 text-white"
-                      : "bg-white text-gray-700 hover:bg-gray-100"
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-white text-gray-700 hover:bg-gray-100'
                   }`}
                 >
                   {pageNumber}
@@ -358,8 +359,8 @@ export default function CoursesPage() {
               to={createPageLink(pagination.page + 1)}
               className={`px-4 py-2 border rounded-md ${
                 pagination.page >= pagination.totalPages
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed pointer-events-none opacity-50"
-                  : "bg-white text-gray-700 hover:bg-gray-100"
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed pointer-events-none opacity-50'
+                  : 'bg-white text-gray-700 hover:bg-gray-100'
               }`}
               onClick={(e) => { if (pagination.page >= pagination.totalPages) e.preventDefault(); }}
               aria-disabled={pagination.page >= pagination.totalPages}
