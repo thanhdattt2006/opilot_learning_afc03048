@@ -51,23 +51,28 @@ cd opilot_learning_afc03048
 
 # Switch to the development branch
 git checkout prd_courses_page_v1
-2. Install Dependencies (Resolving React Conflict)
+```
+
+### 2. Install Dependencies (Resolving React Conflict)
+
 The current setup may involve a conflict between React 19 (used in the project) and React 18 (required by some Remix packages). Use the flag below to bypass the peer dependency error and install packages:
 
-Bash
+```bash
 
 npm install --legacy-peer-deps
-3. Start Development Server
+```
+### 3. Start Development Server
+
 Run the development command to start the server:
 
-Bash
-
+```bash
 npm run dev
+```
 🌐 Accessing the Application
 The application will start at port 5173.
 
 Please navigate directly to the following path to view the main course management dashboard:
-
+```
 http://localhost:5173/courses
-
+```
 Developed by Dave
